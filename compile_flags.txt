@@ -1,0 +1,3 @@
+-xc
+-std=c17
+-Iinclude
