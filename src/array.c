@@ -20,6 +20,7 @@ void *__mini_array_init (Mini_Allocator allocator, usize element_size,
     header->capacity     = initial_capacity;
     header->count        = 0;
     header->element_size = element_size;
+    header->dtor         = NULL;
     memcpy (header->magic, MAGIC, strlen (MAGIC));
     void *array_start = (void *)(header + 1);
     memset (array_start, 0, element_size * initial_capacity);
@@ -33,7 +34,7 @@ Mini_ArrayHeader_ *__mini_array_resize_if_needed (void **array, usize units)
 
     usize needed = header->count + units;
 
-    if (needed < header->capacity)
+    if (needed <= header->capacity)
         return header;
     usize new_capacity = header->capacity * 2;
 
@@ -44,8 +45,9 @@ Mini_ArrayHeader_ *__mini_array_resize_if_needed (void **array, usize units)
         }
         new_capacity *= 2;
     }
-    void *new_buffer = __mini_array_init (
-        header->allocator, header->element_size, new_capacity, $M);
+    void *new_buffer =
+        __mini_array_init (header->allocator, header->element_size,
+                           new_capacity, MINI_SOURCE_LOCATION);
     Mini_ArrayHeader_ *new_header = MINI_ARRAY_HDR (new_buffer);
     new_header->count             = header->count;
     memcpy (new_buffer, *array, header->element_size * header->count);
@@ -54,4 +56,33 @@ Mini_ArrayHeader_ *__mini_array_resize_if_needed (void **array, usize units)
     *array = new_buffer;
 
     return new_header;
+}
+
+void mini_array_set_dtor (void *array, Mini_ArrayElementDtor dtor)
+{
+    Mini_ArrayHeader_ *header = MINI_ARRAY_HDR (array);
+    MINI_ASSERT (IS_MINI_ARRAY (header), "This pointer is not a mini-array");
+    header->dtor = dtor;
+}
+
+void mini_array_destroy (void *array)
+{
+    Mini_ArrayHeader_ *header = MINI_ARRAY_HDR (array);
+    MINI_ASSERT (IS_MINI_ARRAY (header), "This pointer is not a mini-array");
+
+    if (header->dtor) {
+        for (usize n = 0; n < header->count; ++n) {
+            void *element = array + (n * header->element_size);
+            header->dtor (element);
+        }
+    }
+
+    MINI_FREE (header->allocator, header);
+}
+
+usize mini_array_count (void *array)
+{
+    Mini_ArrayHeader_ *header = MINI_ARRAY_HDR (array);
+    MINI_ASSERT (IS_MINI_ARRAY (header), "This pointer is not a mini-array");
+    return header->count;
 }

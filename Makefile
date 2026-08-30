@@ -11,6 +11,9 @@ TARGET = $(BUILD_DIR)/$(TARGET_NAME).a
 
 COMPILER ?= gcc
 OPTIONS  = -std=c17 -I$(INC_DIR)
+CXX_OPTIONS ?=
+
+OPTIONS += $(CXX_OPTIONS)
 
 all: $(TARGET)
 
@@ -21,6 +24,6 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(COMPILER) -o $@ -c $< $(OPTIONS)
 	
-tests:
-	./run_tests.sh ./tests/ "$(TARGET)" "$(OPTIONS)"
+tests: $(TARGET)
+	@./run_tests.sh ./tests/ "$(TARGET)" "$(OPTIONS)"
 .PHONY: tests
