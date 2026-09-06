@@ -85,7 +85,6 @@ static inline usize mini_llong_hash(const long long *x) {
     v ^= v >> 27;
     v *= UINT64_C(0x94d049bb133111eb);
     v ^= v >> 31;
-
     return (usize)v;
 }
 

@@ -18,7 +18,7 @@ void mini_dba_destroy(Mini_DebugAllocator *dba, bool report_leaks) {
         Mini_DebugAllocRecord record = dba->records[n];
         if (record.memory != NULL) {
             if (report_leaks)
-                fprintf(stderr, "[mini.debug]: %s:%d: leak (%p) detected\n",
+                fprintf(stderr, "[mini.debug]: %s:%zu: leak (%p) detected\n",
                         record.src.filename, record.src.line, record.memory);
             leak_count += 1;
         }

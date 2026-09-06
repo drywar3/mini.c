@@ -2,16 +2,23 @@
 #define MINI_STRING_H
 
 #include "mini.c/allocator.h"
+#include "mini.c/default_allocator.h"
 #include "mini.c/array.h"
 #include "mini.c/mini_def.h"
 #include <stdbool.h>
+
+#define mini_string_default_build(...)\
+    mini_string_build(mini_default_allocator(),__VA_ARGS__)
+
+#define mini_string_default_from_cstr(...)\
+    mini_string_from_cstr(mini_default_allocator(),__VA_ARGS__)
 
 typedef MINI_ARRAY (char) Mini_String;
 
 Mini_String mini_string_init (Mini_Allocator allocator);
 Mini_String mini_string_build (Mini_Allocator allocator, const char *fmt, ...);
-Mini_String mini_string_from_cstr (Mini_Allocator allocator, const char *s);
 
+Mini_String mini_string_from_cstr (Mini_Allocator allocator, const char *s);
 bool mini_string_equals (Mini_String one, Mini_String two);
 
 const char *mini_string_cstr (Mini_String string);
