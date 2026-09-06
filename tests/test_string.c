@@ -1,11 +1,16 @@
 #include "mini.c/array.h"
 #include "mini.c/default_allocator.h"
 #include "mini.c/string.h"
+#include "mini.c/string_view.h"
 
-int main ()
-{
+int main() {
     Mini_String string =
         mini_string_build (mini_default_allocator (), "Hello %s", "World");
     mini_string_append_fmt (&string, " This is after append %d", 10);
+    printf("str: %s\n", string);
+
+    Mini_StringView sv = mini_string_substr(string, 0, 5);
+    printf("sv: %.*s\n", SVARG(sv));
+
     mini_array_destroy (string);
 }

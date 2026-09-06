@@ -39,7 +39,7 @@ typedef ptrdiff_t isize;
     do {                                                                       \
         if (!(cond)) {                                                         \
             fprintf (stderr,                                                   \
-                     "[ASSERTION (" #cond ") FAILED]: %s:%d: " msg "\n",       \
+                     "%s:%d: error: assertion (" #cond ") failed: " msg "\n",       \
                      __FILE__, __LINE__, ##__VA_ARGS__);                       \
             abort ();                                                          \
         }                                                                      \

@@ -7,8 +7,8 @@ Mini_DebugAllocator mini_dba_create() {
 
 Mini_DebugAllocator mini_dba_create_with_allocator(Mini_Allocator allocator) {
     Mini_DebugAllocator dba = {0};
-    dba.allocator = allocator;
-    dba.records   = MINI_ARRAY_INIT(allocator, Mini_DebugAllocRecord);
+    dba.allocator           = allocator;
+    dba.records             = MINI_ARRAY_INIT(allocator, Mini_DebugAllocRecord);
     return dba;
 }
 
@@ -29,12 +29,12 @@ void mini_dba_destroy(Mini_DebugAllocator *dba, bool report_leaks) {
 }
 
 static void *__alloc(void *_dba, usize size, Mini_SourceLocation srcloc) {
-    Mini_DebugAllocator *dba = (Mini_DebugAllocator*)_dba;
+    Mini_DebugAllocator *dba = (Mini_DebugAllocator *)_dba;
     void *pointer = mini_allocator_alloc(dba->allocator, size, srcloc);
     Mini_DebugAllocRecord record = {0};
-    record.size   = size;
-    record.src    = srcloc;
-    record.memory = pointer;
+    record.size                  = size;
+    record.src                   = srcloc;
+    record.memory                = pointer;
 
     for (usize n = 0; n < mini_array_count(dba->records); ++n) {
         // This record isn't being used so reuse it.
@@ -48,8 +48,8 @@ static void *__alloc(void *_dba, usize size, Mini_SourceLocation srcloc) {
     return pointer;
 }
 
-static void __free (void *_dba, void *ptr, Mini_SourceLocation srcloc) {
-    Mini_DebugAllocator *dba = (Mini_DebugAllocator*)_dba;
+static void __free(void *_dba, void *ptr, Mini_SourceLocation srcloc) {
+    Mini_DebugAllocator *dba = (Mini_DebugAllocator *)_dba;
     for (usize n = 0; n < mini_array_count(dba->records); ++n) {
         Mini_DebugAllocRecord *record = &dba->records[n];
         if (record->memory == ptr) {
@@ -61,12 +61,14 @@ static void __free (void *_dba, void *ptr, Mini_SourceLocation srcloc) {
     MINI_PANIC("[debug allocator]: attempt to free foreign pointer");
 }
 
-static void *__realloc (void *_dba, void *ptr, usize size, Mini_SourceLocation srcloc) {
-    Mini_DebugAllocator *dba = (Mini_DebugAllocator*)_dba;
+static void *__realloc(void *_dba, void *ptr, usize size,
+                       Mini_SourceLocation srcloc) {
+    Mini_DebugAllocator *dba = (Mini_DebugAllocator *)_dba;
     for (usize n = 0; n < mini_array_count(dba->records); ++n) {
         if (dba->records[n].memory == ptr) {
-            dba->records[n].src    = srcloc;
-            dba->records[n].memory = mini_allocator_realloc(dba->allocator, ptr, size, srcloc);
+            dba->records[n].src = srcloc;
+            dba->records[n].memory =
+                mini_allocator_realloc(dba->allocator, ptr, size, srcloc);
             return dba->records[n].memory;
         }
     }
@@ -75,4 +77,22 @@ static void *__realloc (void *_dba, void *ptr, usize size, Mini_SourceLocation s
 
 Mini_Allocator mini_dba_allocator(Mini_DebugAllocator *dba) {
     return mini_create_allocator(dba, __alloc, __realloc, __free);
+}
+
+bool mini_dba_is_foreign(Mini_DebugAllocator *dba, void *memory) {
+    for (usize n = 0; n < mini_array_count(dba->records); ++n) {
+        if (dba->records[n].memory == memory)
+            return false;
+    }
+    return true;
+}
+
+bool mini_dba_has_leaks(Mini_DebugAllocator *dba) {
+    for (usize n = 0; n < mini_array_count(dba->records); ++n) {
+        Mini_DebugAllocRecord record = dba->records[n];
+        if (record.memory != NULL) {
+            return true;
+        }
+    }
+    return false;
 }

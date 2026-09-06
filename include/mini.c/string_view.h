@@ -9,7 +9,7 @@
 # define SVARG(sv) (int)sv.length, sv.data
 #endif
 
-typedef struct {
+typedef struct Mini_StringView {
     const char *data;
     usize length;
 } Mini_StringView;

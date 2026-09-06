@@ -8,11 +8,13 @@ int main() {
     char *alphabets = MINI_ALLOC_MANY(allocator, char, 26);
     MINI_FREE(allocator, alphabets);
 
-    //char *foreign_memory = malloc(100);
-    //MINI_FREE(allocator, foreign_memory);
+    MINI_ASSERT(!mini_dba_has_leaks(&dba), "memory leak detected");
+
+    char *foreign_memory = malloc(100);
+    MINI_ASSERT(mini_dba_is_foreign(&dba, foreign_memory), "memory should be foreign");
 
     // double-free test
-    MINI_FREE(allocator, alphabets);
+    MINI_ASSERT(mini_dba_is_foreign(&dba, alphabets), "memory should be foreign after free");
 
     mini_dba_destroy(&dba, true);
 }

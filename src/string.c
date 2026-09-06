@@ -1,6 +1,7 @@
 #include "mini.c/string.h"
 #include "mini.c/allocator.h"
 #include "mini.c/array.h"
+#include "mini.c/string_view.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -67,4 +68,12 @@ void mini_string_append_fmt (Mini_String *string, const char *fmt, ...)
 usize mini_string_count (Mini_String string)
 {
     return mini_array_count (string) - 1;
+}
+
+Mini_StringView mini_string_substr(Mini_String string, usize n, usize count) {
+    usize real_count = count;
+    // cap the substr count to the length of the string.
+    if (mini_string_count(string) < real_count)
+        real_count = mini_string_count(string);
+    return mini_sv_init(&string[n], real_count);
 }

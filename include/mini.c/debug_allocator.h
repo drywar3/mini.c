@@ -23,4 +23,7 @@ Mini_DebugAllocator mini_dba_create_with_allocator(Mini_Allocator allocator);
 void mini_dba_destroy(Mini_DebugAllocator *dba, bool report_leaks);
 Mini_Allocator mini_dba_allocator(Mini_DebugAllocator *dba);
 
+bool mini_dba_is_foreign(Mini_DebugAllocator *dba, void *memory);
+bool mini_dba_has_leaks(Mini_DebugAllocator *dba);
+
 #endif // MINI_C_DEBUG_ALLOCATOR_H

@@ -24,6 +24,7 @@ int main ()
     printf ("[1] = %d\n", numbers[1]);
     printf ("[2] = %d\n", numbers[2]);
     printf ("[3] = %d\n", numbers[3]);
+    printf ("[count] = %d\n", mini_array_count(numbers));
 
     mini_array_destroy (numbers);
 }
