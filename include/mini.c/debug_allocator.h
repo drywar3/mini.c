@@ -6,6 +6,10 @@
 #include "mini.c/allocator.h"
 #include "mini.c/array.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 typedef struct {
     Mini_SourceLocation src;
     void *memory;
@@ -25,5 +29,9 @@ Mini_Allocator mini_dba_allocator(Mini_DebugAllocator *dba);
 
 bool mini_dba_is_foreign(Mini_DebugAllocator *dba, void *memory);
 bool mini_dba_has_leaks(Mini_DebugAllocator *dba);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif // MINI_C_DEBUG_ALLOCATOR_H

@@ -17,7 +17,7 @@
         Mini_Allocator allocator;                                              \
     } Name;                                                                    \
     Name Name##_init(Mini_Allocator allocator);                                \
-    bool Name##_contains(Name *map, const Key *key);                           \
+    bool Name##_contains(const Name *map, const Key *key);                           \
     Val *Name##_get(Name *map, const Key *key);                                \
     bool Name##_put(Name *map, Key key, Val val, Val *old_val);                \
     void Name##_destroy(Name *map);                                            \
@@ -32,7 +32,7 @@
         memset(map.buckets, 0, sizeof(*map.buckets) * MINI_C_MAP_CAPACITY);    \
         return map;                                                            \
     }                                                                          \
-    bool Name##_contains(Name *map, const Key *key) {                          \
+    bool Name##_contains(const Name *map, const Key *key) {                          \
         usize index          = Hash(key) % MINI_C_MAP_CAPACITY;                \
         Name##Bucket *bucket = map->buckets[index];                            \
         while (bucket != NULL) {                                               \

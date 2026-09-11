@@ -3,10 +3,14 @@
 
 #include "mini.c/mini_def.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #define MINI_ALLOC(allocator, T)                                               \
-    mini_allocator_alloc (allocator, sizeof (T), MINI_SOURCE_LOCATION)
+    (T*)mini_allocator_alloc (allocator, sizeof (T), MINI_SOURCE_LOCATION)
 #define MINI_ALLOC_MANY(allocator, T, count)                                   \
-    mini_allocator_alloc (allocator, sizeof (T) * count, MINI_SOURCE_LOCATION)
+    (T*)mini_allocator_alloc (allocator, sizeof (T) * count, MINI_SOURCE_LOCATION)
 
 #define MINI_REALLOC(allocator, pointer, new_size)                             \
     mini_allocator_realloc (allocator, pointer, new_size, MINI_SOURCE_LOCATION)
@@ -46,5 +50,9 @@ void *mini_allocator_realloc (Mini_Allocator allocator, void *old_ptr,
                               usize new_size, Mini_SourceLocation srcloc);
 void mini_allocator_free (Mini_Allocator allocator, void *ptr,
                           Mini_SourceLocation srcloc);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif // MINI_ALLOCATOR_H

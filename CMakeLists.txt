@@ -8,3 +8,6 @@ file(GLOB_RECURSE SOURCES src/*.c)
 
 add_library(mini.c STATIC ${SOURCES})
 target_include_directories(mini.c PRIVATE ./include/)
+target_compile_options(mini.c PRIVATE 
+    -Wno-return-type-c-linkage
+)

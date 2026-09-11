@@ -4,10 +4,16 @@
 #include "mini.c/allocator.h"
 #include "mini_def.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #define MINI_ARRAY(T) T *
 #define MINI_ARRAY_INIT(allocator, T)                                          \
-    __mini_array_init (allocator, sizeof (T), MINI_ARRAY_DEFAULT_CAPACITY,     \
-                       MINI_SOURCE_LOCATION)
+    (T *)__mini_array_init(allocator, sizeof(T), MINI_ARRAY_DEFAULT_CAPACITY,  \
+                           MINI_SOURCE_LOCATION)
+#define MINI_ARRAY_INIT_CAP(allocator, capacity, T)                            \
+    (T *)__mini_array_init(allocator, sizeof(T), capacity, MINI_SOURCE_LOCATION)
 
 #ifndef MINI_ARRAY_DEFAULT_CAPACITY
 #define MINI_ARRAY_DEFAULT_CAPACITY 8
@@ -15,10 +21,9 @@
 
 #define MINI_ARRAY_HDR(array) (((Mini_ArrayHeader_ *)(array)) - 1)
 
-typedef void (*Mini_ArrayElementDtor) (void *element);
+typedef void (*Mini_ArrayElementDtor)(void *element);
 
-typedef struct
-{
+typedef struct {
     char magic[3];
     Mini_Allocator allocator;
     usize element_size;
@@ -27,18 +32,19 @@ typedef struct
     Mini_ArrayElementDtor dtor;
 } Mini_ArrayHeader_;
 
-void *__mini_array_init (Mini_Allocator allocator, usize element_size,
-                         usize initial_capacity, Mini_SourceLocation);
-Mini_ArrayHeader_ *__mini_array_resize_if_needed (void **array, usize units);
+void *__mini_array_init(Mini_Allocator allocator, usize element_size,
+                        usize initial_capacity, Mini_SourceLocation);
+Mini_ArrayHeader_ *__mini_array_resize_if_needed(void **array, usize units);
 
-void mini_array_set_dtor (void *array, Mini_ArrayElementDtor dtor);
-void mini_array_destroy (void *array);
-usize mini_array_count (void *array);
+void mini_array_set_dtor(void *array, Mini_ArrayElementDtor dtor);
+void mini_array_destroy(void *array);
+usize mini_array_count(void *array);
+void mini_array_clear(void *array);
 
 #define mini_array_append(array, item)                                         \
     do {                                                                       \
         Mini_ArrayHeader_ *header_ =                                           \
-            __mini_array_resize_if_needed ((void **)&(array), 1);              \
+            __mini_array_resize_if_needed((void **)&(array), 1);               \
         (array)[header_->count] = (item);                                      \
         header_->count += 1;                                                   \
     } while (0)
@@ -46,11 +52,11 @@ usize mini_array_count (void *array);
 #define mini_array_insert(array, index, item)                                  \
     do {                                                                       \
         Mini_ArrayHeader_ *header_ =                                           \
-            __mini_array_resize_if_needed ((void **)&(array), 1);              \
+            __mini_array_resize_if_needed((void **)&(array), 1);               \
         usize idx_ = (index);                                                  \
         if (idx_ < header_->count) {                                           \
-            memmove (&(array)[idx_ + 1], &(array)[idx_],                       \
-                     (header_->count - idx_) * sizeof (*(array)));             \
+            memmove(&(array)[idx_ + 1], &(array)[idx_],                        \
+                    (header_->count - idx_) * sizeof(*(array)));               \
         }                                                                      \
         (array)[idx_] = (item);                                                \
         header_->count += 1;                                                   \
@@ -61,15 +67,19 @@ usize mini_array_count (void *array);
         usize count_ = (usize)(item_count);                                    \
         if (count_ > 0) {                                                      \
             Mini_ArrayHeader_ *header_ =                                       \
-                __mini_array_resize_if_needed ((void **)&(array), count_);     \
+                __mini_array_resize_if_needed((void **)&(array), count_);      \
             usize idx_ = (usize)(index);                                       \
             if (idx_ < header_->count) {                                       \
-                memmove (&(array)[idx_ + count_], &(array)[idx_],              \
-                         (header_->count - idx_) * sizeof (*(array)));         \
+                memmove(&(array)[idx_ + count_], &(array)[idx_],               \
+                        (header_->count - idx_) * sizeof(*(array)));           \
             }                                                                  \
-            memcpy (&(array)[idx_], (items), count_ * sizeof (*(array)));      \
+            memcpy(&(array)[idx_], (items), count_ * sizeof(*(array)));        \
             header_->count += count_;                                          \
         }                                                                      \
     } while (0)
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif // MINI_ARRAY_H

@@ -7,30 +7,40 @@
 #include "mini.c/mini_def.h"
 #include <stdbool.h>
 
-#define mini_string_default_build(...)\
-    mini_string_build(mini_default_allocator(),__VA_ARGS__)
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
-#define mini_string_default_from_cstr(...)\
-    mini_string_from_cstr(mini_default_allocator(),__VA_ARGS__)
+#define mini_string_default_init() mini_string_init(mini_default_allocator())
 
-typedef MINI_ARRAY (char) Mini_String;
+#define mini_string_default_build(...)                                         \
+    mini_string_build(mini_default_allocator(), __VA_ARGS__)
 
-Mini_String mini_string_init (Mini_Allocator allocator);
-Mini_String mini_string_build (Mini_Allocator allocator, const char *fmt, ...);
+#define mini_string_default_from_cstr(...)                                     \
+    mini_string_from_cstr(mini_default_allocator(), __VA_ARGS__)
 
-Mini_String mini_string_from_cstr (Mini_Allocator allocator, const char *s);
-bool mini_string_equals (Mini_String one, Mini_String two);
+typedef MINI_ARRAY(char) Mini_String;
 
-const char *mini_string_cstr (Mini_String string);
+Mini_String mini_string_init(Mini_Allocator allocator);
+Mini_String mini_string_build(Mini_Allocator allocator, const char *fmt, ...);
 
-void mini_string_append (Mini_String *string, char c);
-void mini_string_append_string (Mini_String *string, const char *s);
-void mini_string_append_fmt (Mini_String *string, const char *fmt, ...);
+Mini_String mini_string_from_cstr(Mini_Allocator allocator, const char *s);
+bool mini_string_equals(Mini_String one, Mini_String two);
 
-usize mini_string_count (Mini_String string);
+const char *mini_string_cstr(Mini_String string);
+
+void mini_string_append(Mini_String *string, char c);
+void mini_string_append_string(Mini_String *string, const char *s);
+void mini_string_append_fmt(Mini_String *string, const char *fmt, ...);
+
+usize mini_string_count(Mini_String string);
 
 typedef struct Mini_StringView Mini_StringView;
 
 Mini_StringView mini_string_substr(Mini_String string, usize n, usize count);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif // MINI_STRING_H

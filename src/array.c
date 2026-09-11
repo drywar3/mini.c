@@ -86,3 +86,9 @@ usize mini_array_count (void *array)
     MINI_ASSERT (IS_MINI_ARRAY (header), "This pointer is not a mini-array");
     return header->count;
 }
+
+void mini_array_clear(void *array) {
+    Mini_ArrayHeader_ *header = MINI_ARRAY_HDR (array);
+    MINI_ASSERT (IS_MINI_ARRAY (header), "This pointer is not a mini-array");
+    header->count = 0;
+}
