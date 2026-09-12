@@ -35,10 +35,6 @@ void mini_string_append_fmt(Mini_String *string, const char *fmt, ...);
 
 usize mini_string_count(Mini_String string);
 
-typedef struct Mini_StringView Mini_StringView;
-
-Mini_StringView mini_string_substr(Mini_String string, usize n, usize count);
-
 #if defined(__cplusplus)
 }
 #endif

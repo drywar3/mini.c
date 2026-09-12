@@ -9,6 +9,10 @@
 # define SVARG(sv) (int)sv.length, sv.data
 #endif
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 typedef struct Mini_StringView {
     const char *data;
     usize length;
@@ -31,5 +35,11 @@ bool mini_sv_equals(Mini_StringView sv1, Mini_StringView sv2);
 bool mini_sv_equals_cstr(Mini_StringView sv1, const char *str);
 
 Mini_String mini_sv_to_string(Mini_StringView sv, Mini_Allocator allocator);
+
+Mini_StringView mini_string_substr(Mini_String string, usize n, usize count);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif // MINI_C_STRING_VIEW_H
