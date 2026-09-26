@@ -4,6 +4,11 @@
 #include "mini.c/allocator.h"
 #include "mini.c/array.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+
 // BulkAllocator:
 //     An allocator backend that allows multiple allocations without matching calls to free.
 //
@@ -18,5 +23,10 @@ Mini_BulkAllocator mini_bka_create(Mini_Allocator base);
 void mini_bka_destroy(Mini_BulkAllocator *rda);
 
 Mini_Allocator mini_bka_allocator(Mini_BulkAllocator *rda);
+
+#if defined(__cplusplus)
+}
+#endif
+
 
 #endif // MINI_RECORD_ALLOCATOR_H

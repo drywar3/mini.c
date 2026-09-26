@@ -30,7 +30,7 @@ typedef ptrdiff_t isize;
 
 #define MINI_UNREACHABLE(msg, ...)                                             \
     do {                                                                       \
-        fprintf (stderr, "[UNREACHABLE]: %s:%d: " msg "\n", __FILE__,          \
+        fprintf (stderr, "%s:%d: unreachable: " msg "\n", __FILE__,          \
                  __LINE__, ##__VA_ARGS__);                                     \
         abort ();                                                              \
     } while (0)

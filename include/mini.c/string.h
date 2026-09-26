@@ -33,6 +33,8 @@ void mini_string_append(Mini_String *string, char c);
 void mini_string_append_string(Mini_String *string, const char *s);
 void mini_string_append_fmt(Mini_String *string, const char *fmt, ...);
 
+void mini_string_destroy(Mini_String *string);
+
 usize mini_string_count(Mini_String string);
 
 #if defined(__cplusplus)

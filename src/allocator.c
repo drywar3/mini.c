@@ -18,8 +18,11 @@ void *mini_allocator_alloc (Mini_Allocator allocator, usize size,
                             Mini_SourceLocation srcloc)
 {
     if ((allocator.capabilities & MINI_ALLOCATOR_CAN_ALLOC) ==
-        MINI_ALLOCATOR_CAN_ALLOC)
-        return allocator.alloc_proc (allocator.context, size, srcloc);
+        MINI_ALLOCATOR_CAN_ALLOC) {
+        void *mem = allocator.alloc_proc (allocator.context, size, srcloc);
+        memset(mem, 0, size);
+        return mem;
+    }
     return NULL;
 }
 
@@ -27,9 +30,11 @@ void *mini_allocator_realloc (Mini_Allocator allocator, void *old_ptr,
                               usize new_size, Mini_SourceLocation srcloc)
 {
     if ((allocator.capabilities & MINI_ALLOCATOR_CAN_REALLOC) ==
-        MINI_ALLOCATOR_CAN_REALLOC)
-        return allocator.realloc_proc (allocator.context, old_ptr, new_size,
-                                       srcloc);
+        MINI_ALLOCATOR_CAN_REALLOC) {
+        void *mem = allocator.realloc_proc (allocator.context, old_ptr, new_size,
+                                srcloc);
+        return mem;
+    }
     return NULL;
 }
 

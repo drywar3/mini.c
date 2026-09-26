@@ -7,15 +7,39 @@
 extern "C" {
 #endif
 
-#define MINI_ALLOC(allocator, T)                                               \
-    (T*)mini_allocator_alloc (allocator, sizeof (T), MINI_SOURCE_LOCATION)
-#define MINI_ALLOC_MANY(allocator, T, count)                                   \
-    (T*)mini_allocator_alloc (allocator, sizeof (T) * count, MINI_SOURCE_LOCATION)
+// Portable type inspector for C and C++
+#if defined(__cplusplus)
+#  define MINI_TYPEOF(x) decltype(x)
+#elif defined(__GNUC__) || defined(__clang__)
+#  define MINI_TYPEOF(x) __typeof__(x)
+#else
+#  define MINI_TYPEOF(x) typeof(x)
+#endif
 
-#define MINI_REALLOC(allocator, pointer, new_size)                             \
+#define MINI_ALLOC(allocator, T)                                                \
+    (T*)mini_allocator_alloc (allocator, sizeof (T), MINI_SOURCE_LOCATION)
+
+#define MINI_ALLOC_MANY(allocator, T, count)                                    \
+    (T*)mini_allocator_alloc (allocator, sizeof (T) * (count), MINI_SOURCE_LOCATION)
+
+#define MINI_REALLOC(allocator, pointer, new_size)                              \
     mini_allocator_realloc (allocator, pointer, new_size, MINI_SOURCE_LOCATION)
-#define MINI_FREE(allocator, pointer)                                          \
+
+#define MINI_FREE(allocator, pointer)                                           \
     mini_allocator_free (allocator, pointer, MINI_SOURCE_LOCATION)
+
+// Frees an array of allocated pointers, then frees the array container itself.
+#define MINI_FREE_MANY(allocator, pointer, n)   do {                            \
+        if (pointer) {                                                          \
+            for (usize _n = 0; _n < (n); _n++) {                                \
+                MINI_TYPEOF(*(pointer)) _p = (pointer)[_n];                     \
+                if (_p) {                                                       \
+                    MINI_FREE(allocator, _p);                                   \
+                }                                                               \
+            }                                                                   \
+            MINI_FREE(allocator, pointer);                                      \
+        }                                                                       \
+    } while (0)
 
 typedef void *(*Mini_AllocProcedure) (void *context, usize size,
                                       Mini_SourceLocation);

@@ -14,6 +14,8 @@ bool mini_fs_is_file(const char *filepath);
 
 bool mini_fs_read_into(const char *path, Mini_String *out);
 
+bool mini_fs_canonicalize(const char *path, Mini_String *out);
+
 #if defined(__cplusplus)
 }
 #endif

@@ -77,3 +77,7 @@ Mini_StringView mini_string_substr(Mini_String string, usize n, usize count) {
         real_count = mini_string_count(string);
     return mini_sv_init(&string[n], real_count);
 }
+
+void mini_string_destroy(Mini_String *string) {
+    mini_array_destroy(*string);
+}
