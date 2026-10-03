@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.2)
-project(mini.c LANGUAGES C)
+project(mini.c)
 
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)

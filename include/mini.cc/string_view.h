@@ -9,6 +9,7 @@ namespace mini
         StringView();
         StringView(const char *s);
         StringView(const char *s, usize length);
+        StringView(Mini_StringView s) : base_(s) {}
 
         bool operator==(const StringView &other) const {
             return mini_sv_equals(base_, other.base_);

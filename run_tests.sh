@@ -7,7 +7,7 @@ for arg in $@; do
     fi
 done
 
-for file in $(find ./tests/ -type f -name *.c); do
+for file in `/usr/bin/find ./tests/ -type f -name '*.c'`; do
     echo "====================================================="
     echo "|| $file"
     echo "====================================================="

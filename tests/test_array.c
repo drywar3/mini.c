@@ -20,6 +20,9 @@ int main ()
 
     mini_array_insert (numbers, 1, 60);
 
+    printf ("[count] = %d\n", mini_array_count(numbers));
+    //mini_array_remove (numbers, 1);
+
     printf ("[0] = %d\n", numbers[0]);
     printf ("[1] = %d\n", numbers[1]);
     printf ("[2] = %d\n", numbers[2]);

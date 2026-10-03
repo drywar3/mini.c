@@ -38,7 +38,7 @@ Mini_ArrayHeader_ *__mini_array_resize_if_needed(void **array, usize units);
 
 void mini_array_set_dtor(void *array, Mini_ArrayElementDtor dtor);
 void mini_array_destroy(void *array);
-usize mini_array_count(void *array);
+usize mini_array_count(const void *array);
 void mini_array_clear(void *array);
 
 #define mini_array_append(array, item)                                         \
@@ -47,6 +47,16 @@ void mini_array_clear(void *array);
             __mini_array_resize_if_needed((void **)&(array), 1);               \
         (array)[header_->count] = (item);                                      \
         header_->count += 1;                                                   \
+    } while (0)
+
+#define mini_array_remove(array, index)                                 \
+    do {                                                                \
+        Mini_ArrayHeader_ *header = MINI_ARRAY_HDR(array);              \
+        usize idx_ = (index);                                           \
+        if (idx_ < header->count) {                                     \
+            memmove(&(array)[idx_], &(array)[idx_ + 1], (header->count - idx_) * sizeof(*(array))); \
+            header->count -= 1;                                         \
+        }                                                               \
     } while (0)
 
 #define mini_array_insert(array, index, item)                                  \
@@ -79,6 +89,17 @@ void mini_array_clear(void *array);
     } while (0)
 
 #define mini_array_last(arr) (arr[mini_array_count(arr) - 1])
+
+#define mini_array_copy(dst, src)                                              \
+    do {                                                                       \
+        if ((src) != NULL) {                                                   \
+            Mini_ArrayHeader_ *src_hdr_ = MINI_ARRAY_HDR(src);                 \
+            usize src_count_ = src_hdr_->count;                                \
+            if (src_count_ > 0) {                                              \
+                mini_array_insert_range((dst), 0, (src), src_count_);          \
+            }                                                                  \
+        }                                                                      \
+    } while (0)
 
 #if defined(__cplusplus)
 }
